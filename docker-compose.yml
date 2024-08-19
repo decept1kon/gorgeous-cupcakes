@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - ./html:/var/www/html
+    environment:
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    depends_on:
+      - db
+      - redis
+    networks:
+      - my-network
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: gorgeous_cupcakes
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - my-network
+
+  redis: #added redis service
+    image: redis:6.2
+    ports:
+      - "6379:6379"
+    networks:
+      - my-network #Adding redis to my-network
+
+networks:
+  my-network:
+
+volumes:
+  db_data:
